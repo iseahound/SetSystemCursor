@@ -18,7 +18,7 @@ SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
       return
    }
 
-   if SubStr(Cursor, 1, 4) = "IDC_" {
+   if (Cursor ~= "i)(AppStarting|Arrow|Cross|Help|IBeam|Icon|No|Size|SizeAll|SizeNESW|SizeNS|SizeNWSE|SizeWE|UpArrow|Wait)") {
       Loop Parse, SystemCursors, % ","
       {
          CursorName := SubStr(A_LoopField, 6, 15) ; get the cursor name, no trailing space with substr
