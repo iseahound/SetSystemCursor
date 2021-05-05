@@ -25,7 +25,7 @@ SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
          CursorID := SubStr(A_LoopField, 1, 5) ; get the cursor id
       } until (CursorName = Cursor)
 
-      if !(CursorShared:= DllCall("LoadCursor", "ptr", 0, "ptr", CursorID, "ptr"))
+      if !(CursorShared := DllCall("LoadCursor", "ptr", 0, "ptr", CursorID, "ptr"))
          throw Exception("Error: Invalid cursor name")
 
       Loop Parse, SystemCursors, % ","
@@ -38,7 +38,7 @@ SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
 
    if FileExist(Cursor) {
       SplitPath, Cursor,,, Ext ; auto-detect type
-      if ((uType := (Ext = "ani" || Ext = "cur") ? 2 : (Ext = "ico") ? 1 : (Ext = "bmp") ? 0 : "") == "")
+      if !(uType := (Ext = "ani" || Ext = "cur") ? 2 : (Ext = "ico") ? 1 : 0)
          throw Exception("Error: Invalid file type")
 
       if (Ext = "ani") {
