@@ -18,12 +18,12 @@ SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
       return
    }
 
-   if (Cursor ~= "i)(AppStarting|Arrow|Cross|Help|IBeam|Icon|No|Size|SizeAll|SizeNESW|SizeNS|SizeNWSE|SizeWE|UpArrow|Wait)") {
+   if (Cursor ~= "i)(AppStarting|Arrow|Cross|Hand|Help|IBeam|Icon|No|Size|SizeAll|SizeNESW|SizeNS|SizeNWSE|SizeWE|UpArrow|Wait)") {
       Loop Parse, SystemCursors, % ","
       {
-         CursorName := SubStr(A_LoopField, 6, 15) ; get the cursor name, no trailing space with substr
+         CursorName := SubStr(A_LoopField, 6) ; get the cursor name
          CursorID := SubStr(A_LoopField, 1, 5) ; get the cursor id
-      } until (CursorName = Cursor)
+      } until (CursorName ~= "i)" Cursor)
 
       if !(CursorShared := DllCall("LoadCursor", "ptr", 0, "ptr", CursorID, "ptr"))
          throw Exception("Error: Invalid cursor name")
