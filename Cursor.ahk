@@ -12,8 +12,8 @@ SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
 
       Loop Parse, SystemCursors, % ","
       {
-         CursorHandle := DllCall("CreateCursor", "ptr", 0, "int", 0, "int", 0, "int", 32, "int", 32, "ptr", &AndMask, "ptr", &XorMask)
-         DllCall("SetSystemCursor", "ptr", CursorHandle, "uint", SubStr(A_LoopField, 1, 5)) ; calls DestroyCursor
+         CursorHandle := DllCall("CreateCursor", "ptr", 0, "int", 0, "int", 0, "int", 32, "int", 32, "ptr", &AndMask, "ptr", &XorMask, "ptr")
+         DllCall("SetSystemCursor", "ptr", CursorHandle, "int", SubStr(A_LoopField, 1, 5)) ; calls DestroyCursor
       }
       return
    }
@@ -25,13 +25,13 @@ SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
          CursorID := SubStr(A_LoopField, 1, 5) ; get the cursor id
       } until (CursorName = Cursor)
 
-      if !(CursorShared:= DllCall("LoadCursor", "uint", 0, "uint", CursorID))
+      if !(CursorShared:= DllCall("LoadCursor", "ptr", 0, "ptr", CursorID, "ptr"))
          throw Exception("Error: Invalid cursor name")
 
       Loop Parse, SystemCursors, % ","
       {
-         CursorHandle := DllCall("CopyImage", "ptr", CursorShared, "uint", 2, "int", cx, "int", cy, "uint", 0)
-         DllCall("SetSystemCursor", "ptr", CursorHandle, "uint", SubStr(A_LoopField, 1, 5)) ; calls DestroyCursor
+         CursorHandle := DllCall("CopyImage", "ptr", CursorShared, "uint", 2, "int", cx, "int", cy, "uint", 0, "ptr")
+         DllCall("SetSystemCursor", "ptr", CursorHandle, "int", SubStr(A_LoopField, 1, 5)) ; calls DestroyCursor
       }
       return
    }
@@ -44,17 +44,17 @@ SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
       if (Ext = "ani") {
          Loop Parse, SystemCursors, % ","
          {
-            CursorHandle := DllCall("LoadImage", "ptr", 0, "str", Cursor, "uint", uType, "int", cx, "int", cy, "uint", 0x10)
-            DllCall("SetSystemCursor", "ptr", CursorHandle, "uint", SubStr(A_LoopField, 1, 5)) ; calls DestroyCursor
+            CursorHandle := DllCall("LoadImage", "ptr", 0, "str", Cursor, "uint", uType, "int", cx, "int", cy, "uint", 0x10, "ptr")
+            DllCall("SetSystemCursor", "ptr", CursorHandle, "int", SubStr(A_LoopField, 1, 5)) ; calls DestroyCursor
          }
       } else {
-         if !(CursorShared := DllCall("LoadImage", "ptr", 0, "str", Cursor, "uint", uType, "int", cx, "int", cy, "uint", 0x00008010))
+         if !(CursorShared := DllCall("LoadImage", "ptr", 0, "str", Cursor, "uint", uType, "int", cx, "int", cy, "uint", 0x00008010, "ptr"))
             throw Exception("Error: Corrupted file")
 
          Loop Parse, SystemCursors, % ","
          {
-            CursorHandle := DllCall("CopyImage", "ptr", CursorShared, "uint", 2, "int", 0, "int", 0, "uint", 0)
-            DllCall("SetSystemCursor", "ptr", CursorHandle, "uint", SubStr(A_LoopField, 1, 5)) ; calls DestroyCursor
+            CursorHandle := DllCall("CopyImage", "ptr", CursorShared, "uint", 2, "int", 0, "int", 0, "uint", 0, "ptr")
+            DllCall("SetSystemCursor", "ptr", CursorHandle, "int", SubStr(A_LoopField, 1, 5)) ; calls DestroyCursor
          }
       }
       return
@@ -65,5 +65,5 @@ SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
 
 RestoreCursor() {
    static SPI_SETCURSORS := 0x57
-   return DllCall("SystemParametersInfo", "uint", SPI_SETCURSORS, "uint", 0, "uint", 0, "uint", 0)
+   return DllCall("SystemParametersInfo", "uint", SPI_SETCURSORS, "uint", 0, "ptr", 0, "uint", 0)
 }
