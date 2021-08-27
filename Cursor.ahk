@@ -37,7 +37,7 @@ SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
    }
 
    if FileExist(Cursor) {
-      SplitPath, Cursor,,, Ext ; auto-detect type
+      SplitPath Cursor,,, Ext ; auto-detect type
       if !(uType := (Ext = "ani" || Ext = "cur") ? 2 : (Ext = "ico") ? 1 : 0)
          throw Exception("Error: Invalid file type")
 
