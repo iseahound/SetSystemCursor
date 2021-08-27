@@ -64,6 +64,5 @@ SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
 }
 
 RestoreCursor() {
-   static SPI_SETCURSORS := 0x57
-   return DllCall("SystemParametersInfo", "uint", SPI_SETCURSORS, "uint", 0, "ptr", 0, "uint", 0)
+   return DllCall("SystemParametersInfo", "uint", SPI_SETCURSORS := 0x57, "uint", 0, "ptr", 0, "uint", 0)
 }
