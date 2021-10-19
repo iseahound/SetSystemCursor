@@ -3,34 +3,30 @@
 
 SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
 
-   SystemCursors := "32512IDC_ARROW,32513IDC_IBEAM,32514IDC_WAIT,32515IDC_CROSS,32516IDC_UPARROW,32642IDC_SIZENWSE,32643IDC_SIZENESW,"
-                  . "32644IDC_SIZEWE,32645IDC_SIZENS,32646IDC_SIZEALL,32648IDC_NO,32649IDC_HAND,32650IDC_APPSTARTING,32651IDC_HELP"
+   static SystemCursors := Map("APPSTARTING", 32650, "ARROW", 32512, "CROSS", 32515, "HAND", 32649, "HELP", 32651, "IBEAM", 32513, "NO", 32648,
+                           "SIZEALL", 32646, "SIZENESW", 32643, "SIZENS", 32645, "SIZENWSE", 32642, "SIZEWE", 32644, "UPARROW", 32516, "WAIT", 32514)
 
    if (Cursor = "") {
       AndMask := Buffer(128, 0xFF), XorMask := Buffer(128, 0)
 
-      Loop Parse, SystemCursors, ","
-      {
+      for CursorName, CursorID in SystemCursors {
          CursorHandle := DllCall("CreateCursor", "ptr", 0, "int", 0, "int", 0, "int", 32, "int", 32, "ptr", AndMask, "ptr", XorMask, "ptr")
-         DllCall("SetSystemCursor", "ptr", CursorHandle, "int", SubStr(A_LoopField, 1, 5)) ; calls DestroyCursor
+         DllCall("SetSystemCursor", "ptr", CursorHandle, "int", CursorID) ; calls DestroyCursor
       }
       return
    }
 
    if (Cursor ~= "i)(AppStarting|Arrow|Cross|Hand|Help|IBeam|No|SizeAll|SizeNESW|SizeNS|SizeNWSE|SizeWE|UpArrow|Wait)") {
-      Loop Parse, SystemCursors, ","
-      {
-         CursorName := SubStr(A_LoopField, 6) ; get the cursor name
-         CursorID := SubStr(A_LoopField, 1, 5) ; get the cursor id
-      } until (CursorName ~= "i)" Cursor)
+      for CursorName, CursorID in SystemCursors
+         if (Cursor ~= "i)" CursorName) {
+            if !(CursorShared := DllCall("LoadCursor", "ptr", 0, "ptr", CursorID, "ptr"))
+               throw Error("Error: Invalid cursor name")
+            break
+         }
 
-      if !(CursorShared := DllCall("LoadCursor", "ptr", 0, "ptr", CursorID, "ptr"))
-         throw Error("Error: Invalid cursor name")
-
-      Loop Parse, SystemCursors, ","
-      {
+      for CursorName, CursorID in SystemCursors {
          CursorHandle := DllCall("CopyImage", "ptr", CursorShared, "uint", 2, "int", cx, "int", cy, "uint", 0, "ptr")
-         DllCall("SetSystemCursor", "ptr", CursorHandle, "int", SubStr(A_LoopField, 1, 5)) ; calls DestroyCursor
+         DllCall("SetSystemCursor", "ptr", CursorHandle, "int", CursorID) ; calls DestroyCursor
       }
       return
    }
@@ -41,19 +37,17 @@ SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
          throw Error("Error: Invalid file type")
 
       if (Ext = "ani") {
-         Loop Parse, SystemCursors, ","
-         {
+         for CursorName, CursorID in SystemCursors {
             CursorHandle := DllCall("LoadImage", "ptr", 0, "str", Cursor, "uint", uType, "int", cx, "int", cy, "uint", 0x10, "ptr")
-            DllCall("SetSystemCursor", "ptr", CursorHandle, "int", SubStr(A_LoopField, 1, 5)) ; calls DestroyCursor
+            DllCall("SetSystemCursor", "ptr", CursorHandle, "int", CursorID) ; calls DestroyCursor
          }
       } else {
          if !(CursorShared := DllCall("LoadImage", "ptr", 0, "str", Cursor, "uint", uType, "int", cx, "int", cy, "uint", 0x8010, "ptr"))
             throw Error("Error: Corrupted file")
 
-         Loop Parse, SystemCursors, ","
-         {
+         for CursorName, CursorID in SystemCursors {
             CursorHandle := DllCall("CopyImage", "ptr", CursorShared, "uint", 2, "int", 0, "int", 0, "uint", 0, "ptr")
-            DllCall("SetSystemCursor", "ptr", CursorHandle, "int", SubStr(A_LoopField, 1, 5)) ; calls DestroyCursor
+            DllCall("SetSystemCursor", "ptr", CursorHandle, "int", CursorID) ; calls DestroyCursor
          }
       }
       return
