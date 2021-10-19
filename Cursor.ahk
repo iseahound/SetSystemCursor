@@ -17,7 +17,7 @@ SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
       return
    }
 
-   if (Cursor ~= "i)(AppStarting|Arrow|Cross|Hand|Help|IBeam|Icon|No|Size|SizeAll|SizeNESW|SizeNS|SizeNWSE|SizeWE|UpArrow|Wait)") {
+   if (Cursor ~= "i)(AppStarting|Arrow|Cross|Hand|Help|IBeam|No|SizeAll|SizeNESW|SizeNS|SizeNWSE|SizeWE|UpArrow|Wait)") {
       Loop Parse, SystemCursors, ","
       {
          CursorName := SubStr(A_LoopField, 6) ; get the cursor name
