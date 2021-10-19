@@ -47,7 +47,7 @@ SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
             DllCall("SetSystemCursor", "ptr", CursorHandle, "int", SubStr(A_LoopField, 1, 5)) ; calls DestroyCursor
          }
       } else {
-         if !(CursorShared := DllCall("LoadImage", "ptr", 0, "str", Cursor, "uint", uType, "int", cx, "int", cy, "uint", 0x00008010, "ptr"))
+         if !(CursorShared := DllCall("LoadImage", "ptr", 0, "str", Cursor, "uint", uType, "int", cx, "int", cy, "uint", 0x8010, "ptr"))
             throw Error("Error: Corrupted file")
 
          Loop Parse, SystemCursors, ","
