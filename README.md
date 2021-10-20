@@ -1,4 +1,6 @@
 # SetSystemCursor
+[Download](https://raw.githubusercontent.com/iseahound/SetSystemCursor/main/Cursor%20(for%20v1).ahk) Cursor (for v1).ahk and rename it to Cursor.ahk
+
 Changes the pointer. Original by Serenity. 
 
     SetSystemCursor("Cross")
