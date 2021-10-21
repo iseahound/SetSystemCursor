@@ -16,13 +16,11 @@ SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
       return
    }
 
-   if (Cursor ~= "i)(AppStarting|Arrow|Cross|Hand|Help|IBeam|No|SizeAll|SizeNESW|SizeNS|SizeNWSE|SizeWE|UpArrow|Wait)") {
-      for CursorName, CursorID in SystemCursors
-         if (Cursor ~= "i)" CursorName) {
-            if !(CursorShared := DllCall("LoadCursor", "ptr", 0, "ptr", CursorID, "ptr"))
-               throw Error("Error: Invalid cursor name")
-            break
-         }
+   if (Cursor ~= "^(IDC_)?(?i:AppStarting|Arrow|Cross|Hand|Help|IBeam|No|SizeAll|SizeNESW|SizeNS|SizeNWSE|SizeWE|UpArrow|Wait)$") {
+      Cursor := RegExReplace(Cursor, "^IDC_")
+
+      if !(CursorShared := DllCall("LoadCursor", "ptr", 0, "ptr", SystemCursors[StrUpper(Cursor)], "ptr"))
+         throw Error("Error: Invalid cursor name")
 
       for CursorName, CursorID in SystemCursors {
          CursorHandle := DllCall("CopyImage", "ptr", CursorShared, "uint", 2, "int", cx, "int", cy, "uint", 0, "ptr")
